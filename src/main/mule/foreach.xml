@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5b02478f-1dcc-4a85-848a-52302c6ff451" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<api-gateway:autodiscovery apiId="18483445" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="b658a05c-fe66-46b7-8279-838fe06eaba0" flowRef="foreachFlow1" />
+	<flow name="foreachFlow1" doc:id="0330af5c-a118-475c-8ac0-5129e2af6890" >
+		<http:listener doc:name="Listener" doc:id="8440a9f9-a986-4a1d-81d0-ea949dadc059" config-ref="HTTP_Listener_config" path="/foreach1"/>
+		<set-payload value="#[[1,2,3]]" doc:name="['1','2','3']" doc:id="cda5df6a-f307-49a2-945b-901bfe0a3ac9" />
+		<set-variable value="#[10]" doc:name="Var1:'A'" doc:id="e7cd7f69-7b9e-46ae-90f6-74fb499885f9" variableName="var1"/>
+		<set-variable value="#['B']" doc:name="Var2:'B'" doc:id="a98836a3-439a-48ee-917a-17e50443aead" variableName="var2"/>
+		<foreach doc:name="For Each" doc:id="74b9e9dd-2661-45d2-ae3e-50eb3aed6dbd" >
+			<choice doc:name="Choice" doc:id="59c7b844-b7ef-4494-96e1-d77651b5fbb6" >
+				<when expression="#[payload == 1]">
+					<set-variable value="#['X']" doc:name="Var1:'X'" doc:id="321b5056-cecc-45d3-84fe-b527c19f1d15" variableName="Var7"/>
+					<set-variable value="#['C']" doc:name="Var3:'C'" doc:id="e40d1d28-4707-448a-b427-09223d9b705a" variableName="Var3"/>
+					<logger level="INFO" doc:name="Log var1" doc:id="7a641db6-0bcb-4bc4-b4be-09db8e844e6c" message='#[vars.Var7]'/>
+					<set-variable value='#[vars.var1 + 10]' doc:name="vars.var1" doc:id="24554970-6745-4ef9-8198-f38d9ca36f94" variableName="var1"/>
+					<logger level="INFO" doc:name="Logger" doc:id="d688b866-ab4e-4fff-b19c-bd4fa0f3a07a" message="#[vars.var1]"/>
+				</when>
+				<when expression="#[payload == 2]">
+					<set-variable value="#['Y']" doc:name="Var1:'Y'" doc:id="271dc754-f601-482f-bdbc-0ce95b3e3de1" variableName="Var6"/>
+					<logger level="INFO" doc:name="Log var1" doc:id="e2bb0087-1391-42c1-959e-f487dc828af4" message="#[vars.Var6]"/>
+					<logger level="INFO" doc:name="Log var3" doc:id="ef67af5c-7166-4f37-a64b-f1d6469e8213" message="#[vars.Var3]"/>
+				</when>
+				<otherwise >
+					<set-variable value='#["Z"]' doc:name="Var1:'Z'" doc:id="28f7afe1-63b6-4f02-a581-0b25e8ba96f5" variableName="Var5"/>
+					<set-variable value='#["XYZ"]' doc:name="Var4:'XYZ'" doc:id="1bf816d1-4299-43b7-b87c-40f76dae0f12" variableName="Var4"/>
+					<logger level="INFO" doc:name="Log var1" doc:id="49d954f5-5e27-49c3-b6d0-8ff3488224dd" message='#[vars.Var5]'/>
+					<logger level="INFO" doc:name="Log var3" doc:id="45852b47-729a-4dc1-8a00-4038f32c949e" message="#[vars.Var3]"/>
+					<logger level="INFO" doc:name="Log var4" doc:id="bcdd6bc5-54b1-4b67-aca6-278009893a68" message="#[vars.Var4]"/>
+				</otherwise>
+			</choice>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="4dcb1288-cfb2-4790-867a-0ea7fddf1df3" message="This is outside log ---&gt;#[vars.var1]"/>
+	</flow>
+</mule>
